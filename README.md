@@ -1,9 +1,9 @@
  **vue** 
 
-使用vue脚手架搭建项目实现表格的crud。
+ **使用vue脚手架搭建项目实现表格的crud** 。
 
- **
-实现效果图如下：** 
+ 
+ **实现效果图如下：** 
 
 ### 添加
 ![添加](https://images.gitee.com/uploads/images/2020/0519/230554_744ba32f_5420874.png "add.png")
