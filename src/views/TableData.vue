@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-button type="success" @click="handleAddClick">增加</el-button>
+        <el-button type="success" plain @click="handleAddClick">增加</el-button>
 
         <el-table
                 :data="tableData"
@@ -135,6 +135,7 @@
             },
             handleEditUser(){
                 this.tableData.splice(this.editIndex,1,this.user)
+                this.$message({showClose: true, message: "修改成功", type: 'success'});
                 this.editBox = false
             },
             handleAddClick(){
@@ -146,6 +147,7 @@
                 this.tableData.push(this.addUserData)
                 this.addBox = false
                 this.addUserData = {}
+                this.$message({showClose: true, message: "添加成功", type: 'success'});
             }
         }
     }
@@ -173,11 +175,5 @@
 </script>
 
 <style scoped>
-    .el-table .warning-row {
-        background: oldlace;
-    }
 
-    .el-table .success-row {
-        background: #f0f9eb;
-    }
 </style>
