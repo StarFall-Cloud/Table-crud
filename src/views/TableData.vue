@@ -1,60 +1,79 @@
 <template>
-    <div id="tableData">
+    <div>
+        <el-button type="success" @click="handleAddClick">增加</el-button>
 
         <el-table
-                :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+                :data="tableData"
+                border
                 style="width: 100%">
             <el-table-column
-                    label="姓名"
-                    prop="name">
-            </el-table-column>
-            <el-table-column
-                    label="地址"
-                    prop="address">
-            </el-table-column>
-            <el-table-column
+                    prop="date"
                     label="日期"
-                    prop="date">
+                    width="180">
             </el-table-column>
             <el-table-column
-                    label="电话"
-                    prop="phone">
+                    prop="name"
+                    label="姓名"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="address"
+                    label="地址">
             </el-table-column>
 
-            <el-table-column
-                    align="right">
 
+            <el-table-column label="操作" width="180">
                 <template slot-scope="scope">
-                    <el-button
-                            size="mini"
-                            @click="handleEdit(scope.$index,tableData)">编辑</el-button>
-                    <el-button
-                            size="mini"
-                            type="danger"
-                            @click="handleDelete(scope.$index, tableData)">删除</el-button>
+                    <el-button type="primary" @click="handleEditClick(scope.$index,scope.row)"  size="mini">编辑</el-button>
+                    <el-button type="danger" size="mini" @click="handleDelClick(scope.$index,scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
+        <el-dialog title="修改用户" :visible.sync="editBox" width="50%" :before-close="handleClose">
+            <el-form ref="form" label-width="100px" v-model="user">
+                <el-form-item label="时间:">
+                    <el-input placeholder="请输入时间" maxlength="50" v-model = "user.date"></el-input>
+                </el-form-item>
+                <!--                <el-form-item label="时间:">-->
+                <!--                    <el-date-picker-->
+                <!--                            v-model = "user.date"-->
+                <!--                            type="date"-->
+                <!--                            placeholder="选择日期">-->
+                <!--                    </el-date-picker>-->
+                <!--                </el-form-item>-->
+                <el-form-item label="名字:">
+                    <el-input placeholder="请输入名字" maxlength="50" v-model = "user.name"></el-input>
+                </el-form-item>
+                <el-form-item label="地址:">
+                    <el-input placeholder="请输入地址" maxlength="50" v-model = "user.address"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="handleEditUser">确 定</el-button>
+            </span>
+        </el-dialog>
 
-        <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="名称">
-                <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item label="日期">
-                <el-input v-model="form.date"></el-input>
-            </el-form-item>
-            <el-form-item label="地址">
-                <el-input v-model="form.address"></el-input>
-            </el-form-item>
-            <el-form-item label="电话">
-                <el-input v-model="form.phone"></el-input>
-            </el-form-item>
-
-            <el-form-item>
-                <el-button type="primary" @click="handleSave">增加</el-button>
-            </el-form-item>
-        </el-form>
+        <el-dialog title="添加用户" :visible.sync="addBox" width="50%" :before-close="handleClose">
+            <el-form ref="form" label-width="100px" v-model="addUserData">
+                <el-form-item label="时间:">
+                    <el-date-picker
+                            v-model = "addUserData.date"
+                            type="date"
+                            placeholder="选择日期">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="名字:">
+                    <el-input placeholder="请输入名字" maxlength="50" v-model = "addUserData.name"></el-input>
+                </el-form-item>
+                <el-form-item label="地址:">
+                    <el-input placeholder="请输入地址" maxlength="50" v-model = "addUserData.address"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="handleAddUser">确 定</el-button>
+            </span>
+        </el-dialog>
 
     </div>
 </template>
@@ -66,52 +85,99 @@
         data() {
             return {
                 tableData: [{
-                    name: '李小龙',
-                    address: '湛江码头',
-                    date: '2016-05-02',
-                    phone: '12352356897'
+                    date: '2016-03-02',
+                    name: '张三',
+                    address: '广州市天河区金沙江路 1518 弄'
                 }, {
-                    name: '周星驰',
-                    address: '湛江码头',
-                    date: '2016-05-02',
-                    phone: '12352356897'
+                    date: '2016-04-06',
+                    name: '李四',
+                    address: '广州市黄埔区金沙江路 1517 弄'
                 }, {
-                    name: '肖战',
-                    address: '湛江码头',
-                    date: '2016-05-02',
-                    phone: '12352356897'
+                    date: '2016-08-01',
+                    name: '王五',
+                    address: '北京市金沙江路 1519 弄'
                 }, {
-                    name: '王一博',
-                    address: '湛江码头',
-                    date: '2016-05-02',
-                    phone: '12352356897'
+                    date: '2016-06-03',
+                    name: '赵六',
+                    address: '上海市普陀区金沙江路 1516 弄'
                 }],
-                form: {
-                    name: '',
-                    address: "",
-                    date: '',
-                    phone: ''
-
+                addBox : false,
+                editBox:false,
+                user:{},
+                editIndex:"",
+                addUserData:{
+                    date : "",
+                    name : "",
+                    address : ""
                 }
             }
         },
-        methods: {
-            handleSave(){
-                console.log(this.form);
-                this.tableData.push(this.form)
+        methods:{
+            handleEditClick(index,row){
+                this.editBox = true
+                this.user = row
+                this.editIndex = index
             },
-            handleEdit(index, row) {
-                console.log(index, row);
-                this.form=row[index]
+
+            // eslint-disable-next-line no-unused-vars
+            handleDelClick(index,row){
+                this.$confirm('此操作将删除该用户, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.tableData.splice(index,1)
+                    this.$message({showClose: true, message: "删除成功", type: 'success'});
+                })
             },
-            handleDelete(index, row) {
-                console.log(index, row);
-                row.splice(index,1);
+            handleClose(done) {
+                done();
+            },
+            handleEditUser(){
+                this.tableData.splice(this.editIndex,1,this.user)
+                this.editBox = false
+            },
+            handleAddClick(){
+                this.addBox = true
+            },
+            handleAddUser(){
+                let strDate = dateFormat("YYYY-mm-dd",this.addUserData.date)
+                this.addUserData.date = strDate
+                this.tableData.push(this.addUserData)
+                this.addBox = false
+                this.addUserData = {}
             }
         }
+    }
+
+    function dateFormat(fmt, date) {
+        let ret;
+        const opt = {
+            "Y+": date.getFullYear().toString(),        // 年
+            "m+": (date.getMonth() + 1).toString(),     // 月
+            "d+": date.getDate().toString(),            // 日
+            "H+": date.getHours().toString(),           // 时
+            "M+": date.getMinutes().toString(),         // 分
+            "S+": date.getSeconds().toString()          // 秒
+            // 有其他格式化字符需求可以继续添加，必须转化成字符串
+        };
+        for (let k in opt) {
+            ret = new RegExp("(" + k + ")").exec(fmt);
+            if (ret) {
+                fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+            };
+        };
+        return fmt;
+
     }
 </script>
 
 <style scoped>
+    .el-table .warning-row {
+        background: oldlace;
+    }
 
+    .el-table .success-row {
+        background: #f0f9eb;
+    }
 </style>
